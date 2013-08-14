@@ -337,7 +337,11 @@ public class RabbitMQAutoChannel implements Channel {
     */
    @Override
    public void basicQos(int prefetchSize, int prefetchCount, boolean global) throws IOException {
-      this.getChannel().basicQos(prefetchSize, prefetchCount, global);
+      try {
+         this.getChannel().basicQos(prefetchSize, prefetchCount, global);
+      } catch (IOException connectionReset) {
+         this.getChannel().basicQos(prefetchSize, prefetchCount, global);
+      }
    }
 
    /**
@@ -351,7 +355,11 @@ public class RabbitMQAutoChannel implements Channel {
     */
    @Override
    public void basicQos(int prefetchCount) throws IOException {
-      this.getChannel().basicQos(prefetchCount);
+      try {
+         this.getChannel().basicQos(prefetchCount);
+      } catch (IOException connectionReset) {
+         this.getChannel().basicQos(prefetchCount);
+      }
    }
 
    /**
@@ -366,7 +374,11 @@ public class RabbitMQAutoChannel implements Channel {
     */
    @Override
    public void basicPublish(String exchange, String routingKey, AMQP.BasicProperties props, byte[] body) throws IOException {
-      this.getChannel().basicPublish(exchange, routingKey, props, body);
+      try {
+         this.getChannel().basicPublish(exchange, routingKey, props, body);
+      } catch (IOException connectionReset) {
+         this.getChannel().basicPublish(exchange, routingKey, props, body);
+      }
    }
 
    /**
@@ -382,7 +394,11 @@ public class RabbitMQAutoChannel implements Channel {
     */
    @Override
    public void basicPublish(String exchange, String routingKey, boolean mandatory, AMQP.BasicProperties props, byte[] body) throws IOException {
-      this.getChannel().basicPublish(exchange, routingKey, mandatory, props, body);
+      try {
+         this.getChannel().basicPublish(exchange, routingKey, mandatory, props, body);
+      } catch (IOException connectionReset) {
+         this.getChannel().basicPublish(exchange, routingKey, mandatory, props, body);
+      }
    }
 
    /**
@@ -400,7 +416,11 @@ public class RabbitMQAutoChannel implements Channel {
     */
    @Override
    public void basicPublish(String exchange, String routingKey, boolean mandatory, boolean immediate, AMQP.BasicProperties props, byte[] body) throws IOException {
-      this.getChannel().basicPublish(exchange, routingKey, mandatory, immediate, props, body);
+      try {
+         this.getChannel().basicPublish(exchange, routingKey, mandatory, immediate, props, body);
+      } catch (IOException connectionReset) {
+         this.getChannel().basicPublish(exchange, routingKey, mandatory, immediate, props, body);
+      }
    }
 
    /**
@@ -415,7 +435,11 @@ public class RabbitMQAutoChannel implements Channel {
     */
    @Override
    public AMQP.Exchange.DeclareOk exchangeDeclare(String exchange, String type) throws IOException {
-      return this.getChannel().exchangeDeclare(exchange, type);
+      try {
+         return this.getChannel().exchangeDeclare(exchange, type);
+      } catch (IOException connectionReset) {
+         return this.getChannel().exchangeDeclare(exchange, type);
+      }
    }
 
    /**
@@ -431,7 +455,11 @@ public class RabbitMQAutoChannel implements Channel {
     */
    @Override
    public AMQP.Exchange.DeclareOk exchangeDeclare(String exchange, String type, boolean durable) throws IOException {
-      return this.getChannel().exchangeDeclare(exchange, type, durable);
+      try {
+         return this.getChannel().exchangeDeclare(exchange, type, durable);
+      } catch (IOException connectionReset) {
+         return this.getChannel().exchangeDeclare(exchange, type, durable);
+      }
    }
 
    /**
@@ -449,7 +477,11 @@ public class RabbitMQAutoChannel implements Channel {
     */
    @Override
    public AMQP.Exchange.DeclareOk exchangeDeclare(String exchange, String type, boolean durable, boolean autoDelete, Map<String, Object> arguments) throws IOException {
-      return this.getChannel().exchangeDeclare(exchange, type, durable, autoDelete, arguments);
+      try {
+         return this.getChannel().exchangeDeclare(exchange, type, durable, autoDelete, arguments);
+      } catch (IOException connectionReset) {
+         return this.getChannel().exchangeDeclare(exchange, type, durable, autoDelete, arguments);
+      }
    }
 
    /**
@@ -470,7 +502,11 @@ public class RabbitMQAutoChannel implements Channel {
     */
    @Override
    public AMQP.Exchange.DeclareOk exchangeDeclare(String exchange, String type, boolean durable, boolean autoDelete, boolean internal, Map<String, Object> arguments) throws IOException {
-      return this.getChannel().exchangeDeclare(exchange, type, durable, autoDelete, internal, arguments);
+      try {
+         return this.getChannel().exchangeDeclare(exchange, type, durable, autoDelete, internal, arguments);
+      } catch (IOException connectionReset) {
+         return this.getChannel().exchangeDeclare(exchange, type, durable, autoDelete, internal, arguments);
+      }
    }
 
    /**
@@ -481,7 +517,11 @@ public class RabbitMQAutoChannel implements Channel {
     */
    @Override
    public AMQP.Exchange.DeclareOk exchangeDeclarePassive(String name) throws IOException {
-      return this.getChannel().exchangeDeclarePassive(name);
+      try {
+         return this.getChannel().exchangeDeclarePassive(name);
+      } catch (IOException connectionReset) {
+         return this.getChannel().exchangeDeclarePassive(name);
+      }
    }
 
    /**
@@ -496,7 +536,11 @@ public class RabbitMQAutoChannel implements Channel {
     */
    @Override
    public AMQP.Exchange.DeleteOk exchangeDelete(String exchange, boolean ifUnused) throws IOException {
-      return this.getChannel().exchangeDelete(exchange, ifUnused);
+      try {
+         return this.getChannel().exchangeDelete(exchange, ifUnused);
+      } catch (IOException connectionReset) {
+         return this.getChannel().exchangeDelete(exchange, ifUnused);
+      }
    }
 
    /**
@@ -510,7 +554,11 @@ public class RabbitMQAutoChannel implements Channel {
     */
    @Override
    public AMQP.Exchange.DeleteOk exchangeDelete(String exchange) throws IOException {
-      return this.getChannel().exchangeDelete(exchange);
+      try {
+         return this.getChannel().exchangeDelete(exchange);
+      } catch (IOException connectionReset) {
+         return this.getChannel().exchangeDelete(exchange);
+      }
    }
 
    /**
@@ -526,7 +574,11 @@ public class RabbitMQAutoChannel implements Channel {
     */
    @Override
    public AMQP.Exchange.BindOk exchangeBind(String destination, String source, String routingKey) throws IOException {
-      return this.getChannel().exchangeBind(destination, source, routingKey);
+      try {
+         return this.getChannel().exchangeBind(destination, source, routingKey);
+      } catch (IOException connectionReset) {
+         return this.getChannel().exchangeBind(destination, source, routingKey);
+      }
    }
 
    /**
@@ -543,7 +595,11 @@ public class RabbitMQAutoChannel implements Channel {
     */
    @Override
    public AMQP.Exchange.BindOk exchangeBind(String destination, String source, String routingKey, Map<String, Object> arguments) throws IOException {
-      return this.getChannel().exchangeBind(destination, source, routingKey, arguments);
+      try {
+         return this.getChannel().exchangeBind(destination, source, routingKey, arguments);
+      } catch (IOException connectionReset) {
+         return this.getChannel().exchangeBind(destination, source, routingKey, arguments);
+      }
    }
 
    /**
@@ -559,7 +615,11 @@ public class RabbitMQAutoChannel implements Channel {
     */
    @Override
    public AMQP.Exchange.UnbindOk exchangeUnbind(String destination, String source, String routingKey) throws IOException {
-      return this.getChannel().exchangeUnbind(destination, source, routingKey);
+      try {
+         return this.getChannel().exchangeUnbind(destination, source, routingKey);
+      } catch (IOException connectionReset) {
+         return this.getChannel().exchangeUnbind(destination, source, routingKey);
+      }
    }
 
    /**
@@ -576,7 +636,11 @@ public class RabbitMQAutoChannel implements Channel {
     */
    @Override
    public AMQP.Exchange.UnbindOk exchangeUnbind(String destination, String source, String routingKey, Map<String, Object> arguments) throws IOException {
-      return this.getChannel().exchangeUnbind(destination, source, routingKey, arguments);
+      try {
+         return this.getChannel().exchangeUnbind(destination, source, routingKey, arguments);
+      } catch (IOException connectionReset) {
+         return this.getChannel().exchangeUnbind(destination, source, routingKey, arguments);
+      }
    }
 
    /**
@@ -590,7 +654,11 @@ public class RabbitMQAutoChannel implements Channel {
     */
    @Override
    public AMQP.Queue.DeclareOk queueDeclare() throws IOException {
-      return this.getChannel().queueDeclare();
+      try {
+         return this.getChannel().queueDeclare();
+      } catch (IOException connectionReset) {
+         return this.getChannel().queueDeclare();
+      }
    }
 
    /**
@@ -608,7 +676,11 @@ public class RabbitMQAutoChannel implements Channel {
     */
    @Override
    public AMQP.Queue.DeclareOk queueDeclare(String queue, boolean durable, boolean exclusive, boolean autoDelete, Map<String, Object> arguments) throws IOException {
-      return this.getChannel().queueDeclare(queue, durable, exclusive, autoDelete, arguments);
+      try {
+         return this.getChannel().queueDeclare(queue, durable, exclusive, autoDelete, arguments);
+      } catch (IOException connectionReset) {
+         return this.getChannel().queueDeclare(queue, durable, exclusive, autoDelete, arguments);
+      }
    }
 
    /**
@@ -626,7 +698,11 @@ public class RabbitMQAutoChannel implements Channel {
     */
    @Override
    public AMQP.Queue.DeclareOk queueDeclarePassive(String queue) throws IOException {
-      return this.getChannel().queueDeclarePassive(queue);
+      try {
+         return this.getChannel().queueDeclarePassive(queue);
+      } catch (IOException connectionReset) {
+         return this.getChannel().queueDeclarePassive(queue);
+      }
    }
 
    /**
@@ -640,7 +716,11 @@ public class RabbitMQAutoChannel implements Channel {
     */
    @Override
    public AMQP.Queue.DeleteOk queueDelete(String queue) throws IOException {
-      return this.getChannel().queueDelete(queue);
+      try {
+         return this.getChannel().queueDelete(queue);
+      } catch (IOException connectionReset) {
+         return this.getChannel().queueDelete(queue);
+      }
    }
 
    /**
@@ -656,7 +736,11 @@ public class RabbitMQAutoChannel implements Channel {
     */
    @Override
    public AMQP.Queue.DeleteOk queueDelete(String queue, boolean ifUnused, boolean ifEmpty) throws IOException {
-      return this.getChannel().queueDelete(queue, ifUnused, ifEmpty);
+      try {
+         return this.getChannel().queueDelete(queue, ifUnused, ifEmpty);
+      } catch (IOException connectionReset) {
+         return this.getChannel().queueDelete(queue, ifUnused, ifEmpty);
+      }
    }
 
    /**
@@ -672,7 +756,11 @@ public class RabbitMQAutoChannel implements Channel {
     */
    @Override
    public AMQP.Queue.BindOk queueBind(String queue, String exchange, String routingKey) throws IOException {
-      return this.getChannel().queueBind(queue, exchange, routingKey);
+      try {
+         return this.getChannel().queueBind(queue, exchange, routingKey);
+      } catch (IOException connectionReset) {
+         return this.getChannel().queueBind(queue, exchange, routingKey);
+      }
    }
 
    /**
@@ -689,7 +777,11 @@ public class RabbitMQAutoChannel implements Channel {
     */
    @Override
    public AMQP.Queue.BindOk queueBind(String queue, String exchange, String routingKey, Map<String, Object> arguments) throws IOException {
-      return this.getChannel().queueBind(queue, exchange, routingKey, arguments);
+      try {
+         return this.getChannel().queueBind(queue, exchange, routingKey, arguments);
+      } catch (IOException connectionReset) {
+         return this.getChannel().queueBind(queue, exchange, routingKey, arguments);
+      }
    }
 
    /**
@@ -705,7 +797,11 @@ public class RabbitMQAutoChannel implements Channel {
     */
    @Override
    public AMQP.Queue.UnbindOk queueUnbind(String queue, String exchange, String routingKey) throws IOException {
-      return this.getChannel().queueUnbind(queue, exchange, routingKey);
+      try {
+         return this.getChannel().queueUnbind(queue, exchange, routingKey);
+      } catch (IOException connectionReset) {
+         return this.getChannel().queueUnbind(queue, exchange, routingKey);
+      }
    }
 
    /**
@@ -722,7 +818,11 @@ public class RabbitMQAutoChannel implements Channel {
     */
    @Override
    public AMQP.Queue.UnbindOk queueUnbind(String queue, String exchange, String routingKey, Map<String, Object> arguments) throws IOException {
-      return this.getChannel().queueUnbind(queue, exchange, routingKey, arguments);
+      try {
+         return this.getChannel().queueUnbind(queue, exchange, routingKey, arguments);
+      } catch (IOException connectionReset) {
+         return this.getChannel().queueUnbind(queue, exchange, routingKey, arguments);
+      }
    }
 
    /**
@@ -736,7 +836,11 @@ public class RabbitMQAutoChannel implements Channel {
     */
    @Override
    public AMQP.Queue.PurgeOk queuePurge(String queue) throws IOException {
-      return this.getChannel().queuePurge(queue);
+      try {
+         return this.getChannel().queuePurge(queue);
+      } catch (IOException connectionReset) {
+         return this.getChannel().queuePurge(queue);
+      }
    }
 
    /**
@@ -754,7 +858,11 @@ public class RabbitMQAutoChannel implements Channel {
     */
    @Override
    public GetResponse basicGet(String queue, boolean autoAck) throws IOException {
-      return this.getChannel().basicGet(queue, autoAck);
+      try {
+         return this.getChannel().basicGet(queue, autoAck);
+      } catch (IOException connectionReset) {
+         return this.getChannel().basicGet(queue, autoAck);
+      }
    }
 
    /**
@@ -772,7 +880,11 @@ public class RabbitMQAutoChannel implements Channel {
     */
    @Override
    public void basicAck(long deliveryTag, boolean multiple) throws IOException {
-      this.getChannel().basicAck(deliveryTag, multiple);
+      try {
+         this.getChannel().basicAck(deliveryTag, multiple);
+      } catch (IOException connectionReset) {
+         this.getChannel().basicAck(deliveryTag, multiple);
+      }
    }
 
    /**
@@ -792,7 +904,11 @@ public class RabbitMQAutoChannel implements Channel {
     */
    @Override
    public void basicNack(long deliveryTag, boolean multiple, boolean requeue) throws IOException {
-      this.getChannel().basicNack(deliveryTag, multiple, requeue);
+      try {
+         this.getChannel().basicNack(deliveryTag, multiple, requeue);
+      } catch (IOException connectionReset) {
+         this.getChannel().basicNack(deliveryTag, multiple, requeue);
+      }
    }
 
    /**
@@ -807,7 +923,11 @@ public class RabbitMQAutoChannel implements Channel {
     */
    @Override
    public void basicReject(long deliveryTag, boolean requeue) throws IOException {
-      this.getChannel().basicReject(deliveryTag, requeue);
+      try {
+         this.getChannel().basicReject(deliveryTag, requeue);
+      } catch (IOException connectionReset) {
+         this.getChannel().basicReject(deliveryTag, requeue);
+      }
    }
 
    /**
@@ -825,8 +945,14 @@ public class RabbitMQAutoChannel implements Channel {
     */
    @Override
    public String basicConsume(String queue, Consumer callback) throws IOException {
+      String ret;
+      try {
+         ret = this.basicConsume(queue, callback);
+      } catch (IOException connectionReset) {
+         ret = this.basicConsume(queue, callback);
+      }
       this.consumers.put(queue, new BasicConsumer(callback));
-      return this.basicConsume(queue, callback);
+      return ret;
    }
 
    /**
@@ -846,8 +972,14 @@ public class RabbitMQAutoChannel implements Channel {
     */
    @Override
    public String basicConsume(String queue, boolean autoAck, Consumer callback) throws IOException {
+      String ret;
+      try {
+         ret = this.basicConsume(queue, autoAck, callback);
+      } catch (IOException connectionReset) {
+         ret = this.basicConsume(queue, autoAck, callback);
+      }
       this.consumers.put(queue, new BasicConsumer(callback, autoAck));
-      return this.basicConsume(queue, autoAck, callback);
+      return ret;
    }
 
    /**
@@ -867,8 +999,14 @@ public class RabbitMQAutoChannel implements Channel {
     */
    @Override
    public String basicConsume(String queue, boolean autoAck, String consumerTag, Consumer callback) throws IOException {
+      String ret;
+      try {
+         ret = this.getChannel().basicConsume(queue, autoAck, consumerTag, callback);
+      } catch (IOException connectionReset) {
+         ret = this.getChannel().basicConsume(queue, autoAck, consumerTag, callback);
+      }
       this.consumers.put(queue, new BasicConsumer(callback, autoAck, consumerTag));
-      return this.basicConsume(queue, autoAck, consumerTag, callback);
+      return ret;
    }
 
    /**
@@ -892,8 +1030,14 @@ public class RabbitMQAutoChannel implements Channel {
     */
    @Override
    public String basicConsume(String queue, boolean autoAck, String consumerTag, boolean noLocal, boolean exclusive, Map<String, Object> arguments, Consumer callback) throws IOException {
+      String ret;
+      try {
+         ret = this.getChannel().basicConsume(queue, autoAck, consumerTag, noLocal, exclusive, arguments, callback);
+      } catch (IOException connectionReset) {
+         ret = this.getChannel().basicConsume(queue, autoAck, consumerTag, noLocal, exclusive, arguments, callback);
+      }
       this.consumers.put(queue, new BasicConsumer(callback, autoAck, consumerTag, noLocal, exclusive, arguments));
-      return this.basicConsume(queue, autoAck, consumerTag, noLocal, exclusive, arguments, callback);
+      return ret;
    }
 
    /**
@@ -907,7 +1051,11 @@ public class RabbitMQAutoChannel implements Channel {
     */
    @Override
    public void basicCancel(String consumerTag) throws IOException {
-      this.getChannel().basicCancel(consumerTag);
+      try {
+         this.getChannel().basicCancel(consumerTag);
+      } catch (IOException connectionReset) {
+         this.getChannel().basicCancel(consumerTag);
+      }
    }
 
    /**
@@ -922,7 +1070,11 @@ public class RabbitMQAutoChannel implements Channel {
     */
    @Override
    public AMQP.Basic.RecoverOk basicRecover() throws IOException {
-      return this.getChannel().basicRecover();
+      try {
+         return this.getChannel().basicRecover();
+      } catch (IOException connectionReset) {
+         return this.getChannel().basicRecover();
+      }
    }
 
    /**
@@ -936,7 +1088,11 @@ public class RabbitMQAutoChannel implements Channel {
     */
    @Override
    public AMQP.Basic.RecoverOk basicRecover(boolean requeue) throws IOException {
-      return this.getChannel().basicRecover(requeue);
+      try {
+         return this.getChannel().basicRecover(requeue);
+      } catch (IOException connectionReset) {
+         return this.getChannel().basicRecover(requeue);
+      }
    }
 
    /**
@@ -951,7 +1107,11 @@ public class RabbitMQAutoChannel implements Channel {
     */
    @Override
    public void basicRecoverAsync(boolean requeue) throws IOException {
-      this.getChannel().basicRecoverAsync(requeue);
+      try {
+         this.getChannel().basicRecoverAsync(requeue);
+      } catch (IOException connectionReset) {
+         this.getChannel().basicRecoverAsync(requeue);
+      }
    }
 
    /**
@@ -964,7 +1124,11 @@ public class RabbitMQAutoChannel implements Channel {
     */
    @Override
    public AMQP.Tx.SelectOk txSelect() throws IOException {
-      return this.getChannel().txSelect();
+      try {
+         return this.getChannel().txSelect();
+      } catch (IOException connectionReset) {
+         return this.getChannel().txSelect();
+      }
    }
 
    /**
@@ -977,7 +1141,11 @@ public class RabbitMQAutoChannel implements Channel {
     */
    @Override
    public AMQP.Tx.CommitOk txCommit() throws IOException {
-      return this.getChannel().txCommit();
+      try {
+         return this.getChannel().txCommit();
+      } catch (IOException connectionReset) {
+         return this.getChannel().txCommit();
+      }
    }
 
    /**
@@ -990,7 +1158,11 @@ public class RabbitMQAutoChannel implements Channel {
     */
    @Override
    public AMQP.Tx.RollbackOk txRollback() throws IOException {
-      return this.getChannel().txRollback();
+      try {
+         return this.getChannel().txRollback();
+      } catch (IOException connectionReset) {
+         return this.getChannel().txRollback();
+      }
    }
 
    /**
@@ -1001,7 +1173,11 @@ public class RabbitMQAutoChannel implements Channel {
     */
    @Override
    public AMQP.Confirm.SelectOk confirmSelect() throws IOException {
-      return this.getChannel().confirmSelect();
+      try {
+         return this.getChannel().confirmSelect();
+      } catch (IOException connectionReset) {
+         return this.getChannel().confirmSelect();
+      }
    }
 
    /**
@@ -1054,7 +1230,11 @@ public class RabbitMQAutoChannel implements Channel {
     */
    @Override
    public void waitForConfirmsOrDie() throws IOException, InterruptedException {
-      this.getChannel().waitForConfirmsOrDie();
+      try {
+         this.getChannel().waitForConfirmsOrDie();
+      } catch (IOException connectionReset) {
+         this.getChannel().waitForConfirmsOrDie();
+      }
    }
 
    /**
@@ -1069,7 +1249,11 @@ public class RabbitMQAutoChannel implements Channel {
     */
    @Override
    public void waitForConfirmsOrDie(long timeout) throws IOException, InterruptedException, TimeoutException {
-      this.getChannel().waitForConfirmsOrDie(timeout);
+      try {
+         this.getChannel().waitForConfirmsOrDie(timeout);
+      } catch (IOException connectionReset) {
+         this.getChannel().waitForConfirmsOrDie(timeout);
+      }
    }
 
    /**
@@ -1080,7 +1264,11 @@ public class RabbitMQAutoChannel implements Channel {
     */
    @Override
    public void asyncRpc(Method method) throws IOException {
-      this.getChannel().asyncRpc(method);
+      try {
+         this.getChannel().asyncRpc(method);
+      } catch (IOException connectionReset) {
+         this.getChannel().asyncRpc(method);
+      }
    }
 
    /**
@@ -1092,7 +1280,11 @@ public class RabbitMQAutoChannel implements Channel {
     */
    @Override
    public Command rpc(Method method) throws IOException {
-      return this.getChannel().rpc(method);
+      try {
+         return this.getChannel().rpc(method);
+      } catch (IOException connectionReset) {
+         return this.getChannel().rpc(method);
+      }
    }
 
    /**
