@@ -1,19 +1,18 @@
 package com.clevercloud.rabbitmq;
 
 import com.clevercloud.annotations.NonEmpty;
-import com.rabbitmq.client.Channel;
-import com.rabbitmq.client.Connection;
-import com.rabbitmq.client.ConnectionFactory;
+import com.rabbitmq.client.*;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.net.InetAddress;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.logging.Logger;
 
-public class RabbitMQAutoConnection {
+public class RabbitMQAutoConnection implements Connection {
 
    /**
     * Retry until success
@@ -40,6 +39,8 @@ public class RabbitMQAutoConnection {
    private long interval;
    private long tries;
 
+   private List<ShutdownListener> shutdownListeners;
+
    private Random random;
 
    public RabbitMQAutoConnection(@Nonnull @NonEmpty List<String> hosts, int port, String login, String password, long interval, long tries) {
@@ -50,6 +51,8 @@ public class RabbitMQAutoConnection {
 
       this.interval = interval;
       this.tries = tries;
+
+      this.shutdownListeners = new ArrayList<>();
 
       this.random = new Random();
    }
@@ -62,11 +65,19 @@ public class RabbitMQAutoConnection {
       this(hosts, login, password, DEFAULT_INTERVAL, DEFAULT_TRIES);
    }
 
+   public long getTries() {
+      return tries;
+   }
+
+   public long getInterval() {
+      return interval;
+   }
+
    private boolean isConnected() {
       return this.connection != null && this.connection.isOpen();
    }
 
-   public void checkConnection() {
+   private void checkConnection() {
       if (this.isConnected())
          return;
 
@@ -100,15 +111,11 @@ public class RabbitMQAutoConnection {
    }
 
    /**
-    * Wrapper around Connection methods
-    * Comments taken from Connection
-    */
-
-   /**
     * Retrieve the host.
     *
     * @return the hostname of the peer we're connected to.
     */
+   @Override
    public InetAddress getAddress() {
       return this.getConnection().getAddress();
    }
@@ -118,7 +125,7 @@ public class RabbitMQAutoConnection {
     *
     * @return the port number of the peer we're connected to.
     */
-
+   @Override
    public int getPort() {
       return this.getConnection().getPort();
    }
@@ -129,6 +136,7 @@ public class RabbitMQAutoConnection {
     *
     * @return the maximum channel number permitted for this connection.
     */
+   @Override
    public int getChannelMax() {
       return this.getConnection().getChannelMax();
    }
@@ -138,6 +146,7 @@ public class RabbitMQAutoConnection {
     *
     * @return the maximum frame size, in octets; zero if unlimited
     */
+   @Override
    public int getFrameMax() {
       return this.getConnection().getFrameMax();
    }
@@ -147,6 +156,7 @@ public class RabbitMQAutoConnection {
     *
     * @return the heartbeat interval, in seconds; zero if none
     */
+   @Override
    public int getHeartbeat() {
       return this.getConnection().getHeartbeat();
    }
@@ -156,6 +166,7 @@ public class RabbitMQAutoConnection {
     *
     * @return a copy of the map of client properties
     */
+   @Override
    public Map<String, Object> getClientProperties() {
       return this.getConnection().getClientProperties();
    }
@@ -165,8 +176,17 @@ public class RabbitMQAutoConnection {
     *
     * @return a map of the server properties. This typically includes the product name and version of the server.
     */
+   @Override
    public Map<String, Object> getServerProperties() {
       return this.getConnection().getServerProperties();
+   }
+
+   public Channel createRawChannel() throws IOException {
+      return this.getConnection().createChannel();
+   }
+
+   public Channel createRawChannel(int channelNumber) throws IOException {
+      return this.getConnection().createChannel(channelNumber);
    }
 
    /**
@@ -175,8 +195,9 @@ public class RabbitMQAutoConnection {
     * @return a new channel descriptor, or null if none is available
     * @throws IOException if an I/O problem is encountered
     */
-   public Channel createChannel() throws IOException { // FIXME: wrapper
-      return this.getConnection().createChannel();
+   @Override
+   public Channel createChannel() throws IOException {
+      return new RabbitMQAutoChannel(this);
    }
 
    /**
@@ -186,8 +207,9 @@ public class RabbitMQAutoConnection {
     * @return a new channel descriptor, or null if this channel number is already in use
     * @throws IOException if an I/O problem is encountered
     */
-   public Channel createChannel(int channelNumber) throws IOException {  // FIXME: wrapper
-      return this.getConnection().createChannel(channelNumber);
+   @Override
+   public Channel createChannel(int channelNumber) throws IOException {
+      return new RabbitMQAutoChannel(this, channelNumber);
    }
 
    /**
@@ -199,6 +221,7 @@ public class RabbitMQAutoConnection {
     *
     * @throws IOException if an I/O problem is encountered
     */
+   @Override
    public void close() throws IOException {
       this.getConnection().close();
    }
@@ -212,6 +235,7 @@ public class RabbitMQAutoConnection {
     * @param closeMessage a message indicating the reason for closing the connection
     * @throws IOException if an I/O problem is encountered
     */
+   @Override
    public void close(int closeCode, String closeMessage) throws IOException {
       this.getConnection().close(closeCode, closeMessage);
    }
@@ -229,6 +253,7 @@ public class RabbitMQAutoConnection {
     *                operations, use -1 for infinity
     * @throws IOException if an I/O problem is encountered
     */
+   @Override
    public void close(int timeout) throws IOException {
       this.getConnection().close(timeout);
    }
@@ -245,6 +270,7 @@ public class RabbitMQAutoConnection {
     *                     operations, use -1 for infinity
     * @throws IOException if an I/O problem is encountered
     */
+   @Override
    public void close(int closeCode, String closeMessage, int timeout) throws IOException {
       this.getConnection().close(closeCode, closeMessage, timeout);
    }
@@ -257,6 +283,7 @@ public class RabbitMQAutoConnection {
     * Forces the connection to close.
     * Any encountered exceptions in the close operations are silently discarded.
     */
+   @Override
    public void abort() {
       this.getConnection().abort();
    }
@@ -270,6 +297,7 @@ public class RabbitMQAutoConnection {
     * @param closeCode    the close code (See under "Reply Codes" in the AMQP specification)
     * @param closeMessage a message indicating the reason for closing the connection
     */
+   @Override
    public void abort(int closeCode, String closeMessage) {
       this.getConnection().abort(closeCode, closeMessage);
    }
@@ -286,6 +314,7 @@ public class RabbitMQAutoConnection {
     * @param timeout timeout (in milliseconds) for completing all the close-related
     *                operations, use -1 for infinity
     */
+   @Override
    public void abort(int timeout) {
       this.getConnection().abort(timeout);
    }
@@ -303,7 +332,66 @@ public class RabbitMQAutoConnection {
     * @param timeout      timeout (in milliseconds) for completing all the close-related
     *                     operations, use -1 for infinity
     */
+   @Override
    public void abort(int closeCode, String closeMessage, int timeout) {
       this.getConnection().abort(closeCode, closeMessage, timeout);
+   }
+
+   /**
+    * Add shutdown listener.
+    * If the component is already closed, handler is fired immediately
+    *
+    * @param listener {@link com.rabbitmq.client.ShutdownListener} to the component
+    */
+   @Override
+   public void addShutdownListener(ShutdownListener listener) {
+      this.getConnection().addShutdownListener(listener);
+      this.shutdownListeners.add(listener);
+   }
+
+   /**
+    * Remove shutdown listener for the component.
+    *
+    * @param listener {@link com.rabbitmq.client.ShutdownListener} to be removed
+    */
+   @Override
+   public void removeShutdownListener(ShutdownListener listener) {
+      this.shutdownListeners.remove(listener);
+      this.connection.removeShutdownListener(listener);
+   }
+
+   /**
+    * Get the shutdown reason object
+    *
+    * @return ShutdownSignalException if component is closed, null otherwise
+    */
+   @Override
+   public ShutdownSignalException getCloseReason() {
+      return this.getConnection().getCloseReason();
+   }
+
+   /**
+    * Protected API - notify the listeners attached to the component
+    *
+    * @see com.rabbitmq.client.ShutdownListener
+    */
+   @Override
+   public void notifyListeners() {
+      this.getConnection().notifyListeners();
+   }
+
+   /**
+    * Determine whether the component is currently open.
+    * Will return false if we are currently closing.
+    * Checking this method should be only for information,
+    * because of the race conditions - state can change after the call.
+    * Instead just execute and try to catch ShutdownSignalException
+    * and IOException
+    *
+    * @return true when component is open, false otherwise
+    */
+   @Override
+   public boolean isOpen() {
+      return this.getConnection().isOpen();
    }
 }
