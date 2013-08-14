@@ -9,6 +9,7 @@ import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.util.List;
 import java.util.Random;
+import java.util.logging.Logger;
 
 public class RabbitMQAutoConnection {
 
@@ -43,15 +44,20 @@ public class RabbitMQAutoConnection {
    }
 
    public void checkConnection() throws IOException {
-      if (this.connection == null || !this.connection.isOpen()) { // TODO: loop with log and timeout
+      while (this.connection == null || !this.connection.isOpen()) {
+         Logger.getLogger(RabbitMQAutoConnection.class.getName()).info("Attempting to " + ((this.connection != null) ? "re" : "") + "connect to the rabbitmq server.");
+
          ConnectionFactory factory = new ConnectionFactory();
          factory.setHost(this.hosts.get(this.random.nextInt(this.hosts.size())));
          factory.setPort(this.port);
          factory.setUsername(this.login);
          factory.setPassword(this.password);
 
-         this.connection = factory.newConnection();
+         this.connection = factory.newConnection(); // TODO: call newConnextion with null, Address[] ?
+
+         break; // TODO: loop with timeout
       }
+      Logger.getLogger(RabbitMQAutoConnection.class.getName()).fine("Connected to the rabbitmq server.");
    }
 
    public Connection getConnection() throws IOException {
