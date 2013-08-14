@@ -61,6 +61,10 @@ public class RabbitMQAutoConnection implements Connection {
       this(hosts, ConnectionFactory.USE_DEFAULT_PORT, login, password, interval, tries);
    }
 
+   public RabbitMQAutoConnection(@Nonnull @NonEmpty List<String> hosts, int port, String login, String password) {
+      this(hosts, port, login, password, DEFAULT_INTERVAL, DEFAULT_TRIES);
+   }
+
    public RabbitMQAutoConnection(@Nonnull @NonEmpty List<String> hosts, String login, String password) {
       this(hosts, login, password, DEFAULT_INTERVAL, DEFAULT_TRIES);
    }
