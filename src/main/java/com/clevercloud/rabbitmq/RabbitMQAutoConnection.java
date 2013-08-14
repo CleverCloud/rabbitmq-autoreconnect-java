@@ -1,25 +1,35 @@
 package com.clevercloud.rabbitmq;
 
+import com.clevercloud.annotations.NonEmpty;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 
+import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.util.List;
 import java.util.Random;
 
 public class RabbitMQAutoConnection {
 
+   /**
+    * Taken from ConnectionFactory:
+    * 'Use the default port' port
+    */
+   public static final int USE_DEFAULT_PORT = -1;
+
    private Connection connection;
 
    private List<String> hosts;
+   private int port;
    private String login;
    private String password;
 
    private Random random;
 
-   public RabbitMQAutoConnection(List<String> hosts, String login, String password) throws IOException {   // TODO: port, timeout, retry
-      this.hosts = hosts; // TODO: check for null
+   public RabbitMQAutoConnection(@Nonnull @NonEmpty List<String> hosts, int port, String login, String password) throws IOException {   // TODO: timeout, retry
+      this.hosts = hosts;
+      this.port = port;
       this.login = login;
       this.password = password;
 
@@ -28,10 +38,15 @@ public class RabbitMQAutoConnection {
       this.checkConnection();
    }
 
+   public RabbitMQAutoConnection(@Nonnull @NonEmpty List<String> hosts, String login, String password) throws IOException {
+      this(hosts, USE_DEFAULT_PORT, login, password);
+   }
+
    public void checkConnection() throws IOException {
       if (this.connection == null || !this.connection.isOpen()) { // TODO: loop with log and timeout
          ConnectionFactory factory = new ConnectionFactory();
          factory.setHost(this.hosts.get(this.random.nextInt(this.hosts.size())));
+         factory.setPort(this.port);
          factory.setUsername(this.login);
          factory.setPassword(this.password);
 
