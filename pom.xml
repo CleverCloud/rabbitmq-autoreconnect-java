@@ -4,7 +4,7 @@
     <groupId>com.clevercloud</groupId>
     <artifactId>rabbitmq-autoreconnect</artifactId>
     <packaging>jar</packaging>
-    <version>0.1</version>
+    <version>1.0</version>
     <name>rabbitmq-autoreconnect</name>
     <url>http://maven.apache.org</url>
 

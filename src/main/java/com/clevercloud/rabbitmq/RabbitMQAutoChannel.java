@@ -85,7 +85,8 @@ public class RabbitMQAutoChannel implements Channel {
       }
       if (this.isConnected())
          Logger.getLogger(RabbitMQAutoConnection.class.getName()).info("Created channel to the rabbitmq server.");
-      // TODO else exception
+      else
+         throw new NoRabbitMQConnectionException();
    }
 
    public Channel getChannel() {

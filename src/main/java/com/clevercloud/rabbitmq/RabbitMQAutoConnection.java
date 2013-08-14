@@ -102,7 +102,8 @@ public class RabbitMQAutoConnection implements Connection {
       }
       if (this.isConnected())
          Logger.getLogger(RabbitMQAutoConnection.class.getName()).info("Connected to the rabbitmq server.");
-      // TODO else exception
+      else
+         throw new NoRabbitMQConnectionException();
    }
 
    public Connection getConnection() {
