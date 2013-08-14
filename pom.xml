@@ -3,10 +3,26 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.clevercloud</groupId>
     <artifactId>rabbitmq-autoreconnect</artifactId>
-    <packaging>jar</packaging>
     <version>1.0</version>
+
     <name>rabbitmq-autoreconnect</name>
+    <description>Helper to automatically handle reconnections automatically in a pool of rabbitmq servers.</description>
     <url>http://maven.apache.org</url>
+
+
+    <licenses>
+        <license>
+            <name>GNU General Public License, version 2</name>
+            <url>http://www.gnu.org/licenses/gpl-2.0.html</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <scm>
+        <url>https://github.com/CleverCloud/rabbitmq-autoreconnect-java</url>
+    </scm>
+
+    <packaging>jar</packaging>
 
     <properties>
         <endorsed.dir>${project.build.directory}/endorsed</endorsed.dir>
@@ -27,12 +43,6 @@
     </dependencies>
 
     <build>
-        <extensions>
-            <extension>
-                <groupId>org.apache.maven.wagon</groupId>
-                <artifactId>wagon-ssh</artifactId>
-            </extension>
-        </extensions>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
