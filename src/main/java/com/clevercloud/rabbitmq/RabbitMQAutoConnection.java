@@ -14,10 +14,19 @@ import java.util.logging.Logger;
 public class RabbitMQAutoConnection {
 
    /**
-    * Taken from ConnectionFactory:
-    * 'Use the default port' port
+    * Retry until success
     */
-   public static final int USE_DEFAULT_PORT = -1;
+   public static final long NO_TRIES_LIMIT = -1;
+
+   /**
+    * Default interval before two reconnection attempts
+    */
+   public static final long DEFAULT_INTERVAL = 500;
+
+   /**
+    * Default maximal number of tries to reconnect
+    */
+   public static final long DEFAULT_TRIES = NO_TRIES_LIMIT;
 
    private Connection connection;
 
@@ -26,25 +35,39 @@ public class RabbitMQAutoConnection {
    private String login;
    private String password;
 
+   private long interval;
+   private long tries;
+
    private Random random;
 
-   public RabbitMQAutoConnection(@Nonnull @NonEmpty List<String> hosts, int port, String login, String password) throws IOException {   // TODO: timeout, retry
+   public RabbitMQAutoConnection(@Nonnull @NonEmpty List<String> hosts, int port, String login, String password, long interval, long tries) throws IOException {
       this.hosts = hosts;
       this.port = port;
       this.login = login;
       this.password = password;
+
+      this.interval = interval;
+      this.tries = tries;
 
       this.random = new Random();
 
       this.checkConnection();
    }
 
+   public RabbitMQAutoConnection(@Nonnull @NonEmpty List<String> hosts, String login, String password, long interval, long tries) throws IOException {
+      this(hosts, ConnectionFactory.USE_DEFAULT_PORT, login, password, interval, tries);
+   }
+
    public RabbitMQAutoConnection(@Nonnull @NonEmpty List<String> hosts, String login, String password) throws IOException {
-      this(hosts, USE_DEFAULT_PORT, login, password);
+      this(hosts, login, password, DEFAULT_INTERVAL, DEFAULT_TRIES);
+   }
+
+   private boolean isConnected() {
+      return this.connection != null && this.connection.isOpen();
    }
 
    public void checkConnection() throws IOException {
-      while (this.connection == null || !this.connection.isOpen()) {
+      for (int tries = 0; (this.tries == NO_TRIES_LIMIT || tries < this.tries) && !this.isConnected(); ++tries) {
          Logger.getLogger(RabbitMQAutoConnection.class.getName()).info("Attempting to " + ((this.connection != null) ? "re" : "") + "connect to the rabbitmq server.");
 
          ConnectionFactory factory = new ConnectionFactory();
@@ -55,7 +78,10 @@ public class RabbitMQAutoConnection {
 
          this.connection = factory.newConnection(); // TODO: call newConnextion with null, Address[] ?
 
-         break; // TODO: loop with timeout
+         try {
+            Thread.sleep(this.interval);
+         } catch (InterruptedException ignored) {
+         }
       }
       Logger.getLogger(RabbitMQAutoConnection.class.getName()).fine("Connected to the rabbitmq server.");
    }
