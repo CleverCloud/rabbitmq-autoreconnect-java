@@ -948,9 +948,9 @@ public class RabbitMQAutoChannel implements Channel {
    public String basicConsume(String queue, Consumer callback) throws IOException {
       String ret;
       try {
-         ret = this.basicConsume(queue, callback);
+         ret = this.getChannel().basicConsume(queue, callback);
       } catch (IOException connectionReset) {
-         ret = this.basicConsume(queue, callback);
+         ret = this.getChannel().basicConsume(queue, callback);
       }
       this.consumers.put(queue, new BasicConsumer(callback));
       return ret;
@@ -975,9 +975,9 @@ public class RabbitMQAutoChannel implements Channel {
    public String basicConsume(String queue, boolean autoAck, Consumer callback) throws IOException {
       String ret;
       try {
-         ret = this.basicConsume(queue, autoAck, callback);
+         ret = this.getChannel().basicConsume(queue, autoAck, callback);
       } catch (IOException connectionReset) {
-         ret = this.basicConsume(queue, autoAck, callback);
+         ret = this.getChannel().basicConsume(queue, autoAck, callback);
       }
       this.consumers.put(queue, new BasicConsumer(callback, autoAck));
       return ret;
