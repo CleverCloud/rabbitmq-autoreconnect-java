@@ -81,14 +81,15 @@ public class RabbitMQAutoConnection implements Connection {
       if (this.isConnected())
          return;
 
+      ConnectionFactory factory = new ConnectionFactory();
+      factory.setPort(this.port);
+      factory.setUsername(this.login);
+      factory.setPassword(this.password);
+
       for (int tries = 0; (this.tries == NO_TRIES_LIMIT || tries < this.tries) && !this.isConnected(); ++tries) {
          Logger.getLogger(RabbitMQAutoConnection.class.getName()).info("Attempting to " + ((this.connection != null) ? "re" : "") + "connect to the rabbitmq server.");
 
-         ConnectionFactory factory = new ConnectionFactory();
          factory.setHost(this.hosts.get(this.random.nextInt(this.hosts.size())));
-         factory.setPort(this.port);
-         factory.setUsername(this.login);
-         factory.setPassword(this.password);
 
          try {
             this.connection = factory.newConnection(); // TODO: call newConnection with null, Address[] ?
