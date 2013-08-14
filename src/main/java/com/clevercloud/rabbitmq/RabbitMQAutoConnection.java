@@ -7,7 +7,6 @@ import com.rabbitmq.client.ConnectionFactory;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
-import java.net.ConnectException;
 import java.net.InetAddress;
 import java.util.List;
 import java.util.Map;
@@ -43,7 +42,7 @@ public class RabbitMQAutoConnection {
 
    private Random random;
 
-   public RabbitMQAutoConnection(@Nonnull @NonEmpty List<String> hosts, int port, String login, String password, long interval, long tries) throws IOException {
+   public RabbitMQAutoConnection(@Nonnull @NonEmpty List<String> hosts, int port, String login, String password, long interval, long tries) {
       this.hosts = hosts;
       this.port = port;
       this.login = login;
@@ -55,11 +54,11 @@ public class RabbitMQAutoConnection {
       this.random = new Random();
    }
 
-   public RabbitMQAutoConnection(@Nonnull @NonEmpty List<String> hosts, String login, String password, long interval, long tries) throws IOException {
+   public RabbitMQAutoConnection(@Nonnull @NonEmpty List<String> hosts, String login, String password, long interval, long tries) {
       this(hosts, ConnectionFactory.USE_DEFAULT_PORT, login, password, interval, tries);
    }
 
-   public RabbitMQAutoConnection(@Nonnull @NonEmpty List<String> hosts, String login, String password) throws IOException {
+   public RabbitMQAutoConnection(@Nonnull @NonEmpty List<String> hosts, String login, String password) {
       this(hosts, login, password, DEFAULT_INTERVAL, DEFAULT_TRIES);
    }
 
@@ -67,7 +66,7 @@ public class RabbitMQAutoConnection {
       return this.connection != null && this.connection.isOpen();
    }
 
-   public void checkConnection() throws IOException {
+   public void checkConnection() {
       if (this.isConnected())
          return;
 
@@ -82,7 +81,7 @@ public class RabbitMQAutoConnection {
 
          try {
             this.connection = factory.newConnection(); // TODO: call newConnection with null, Address[] ?
-         } catch (ConnectException ignored) {
+         } catch (IOException ignored) {
          }
 
          try {
@@ -95,7 +94,7 @@ public class RabbitMQAutoConnection {
       // TODO else exception
    }
 
-   public Connection getConnection() throws IOException {
+   public Connection getConnection() {
       this.checkConnection();
       return this.connection;
    }
@@ -110,7 +109,7 @@ public class RabbitMQAutoConnection {
     *
     * @return the hostname of the peer we're connected to.
     */
-   public InetAddress getAddress() throws IOException {
+   public InetAddress getAddress() {
       return this.getConnection().getAddress();
    }
 
@@ -120,7 +119,7 @@ public class RabbitMQAutoConnection {
     * @return the port number of the peer we're connected to.
     */
 
-   public int getPort() throws IOException {
+   public int getPort() {
       return this.getConnection().getPort();
    }
 
@@ -130,7 +129,7 @@ public class RabbitMQAutoConnection {
     *
     * @return the maximum channel number permitted for this connection.
     */
-   public int getChannelMax() throws IOException {
+   public int getChannelMax() {
       return this.getConnection().getChannelMax();
    }
 
@@ -139,7 +138,7 @@ public class RabbitMQAutoConnection {
     *
     * @return the maximum frame size, in octets; zero if unlimited
     */
-   public int getFrameMax() throws IOException {
+   public int getFrameMax() {
       return this.getConnection().getFrameMax();
    }
 
@@ -148,7 +147,7 @@ public class RabbitMQAutoConnection {
     *
     * @return the heartbeat interval, in seconds; zero if none
     */
-   public int getHeartbeat() throws IOException {
+   public int getHeartbeat() {
       return this.getConnection().getHeartbeat();
    }
 
@@ -157,7 +156,7 @@ public class RabbitMQAutoConnection {
     *
     * @return a copy of the map of client properties
     */
-   public Map<String, Object> getClientProperties() throws IOException {
+   public Map<String, Object> getClientProperties() {
       return this.getConnection().getClientProperties();
    }
 
@@ -166,7 +165,7 @@ public class RabbitMQAutoConnection {
     *
     * @return a map of the server properties. This typically includes the product name and version of the server.
     */
-   public Map<String, Object> getServerProperties() throws IOException {
+   public Map<String, Object> getServerProperties() {
       return this.getConnection().getServerProperties();
    }
 
@@ -176,7 +175,7 @@ public class RabbitMQAutoConnection {
     * @return a new channel descriptor, or null if none is available
     * @throws IOException if an I/O problem is encountered
     */
-   public Channel createChannel() throws IOException {
+   public Channel createChannel() throws IOException { // FIXME: wrapper
       return this.getConnection().createChannel();
    }
 
@@ -187,7 +186,7 @@ public class RabbitMQAutoConnection {
     * @return a new channel descriptor, or null if this channel number is already in use
     * @throws IOException if an I/O problem is encountered
     */
-   public Channel createChannel(int channelNumber) throws IOException {
+   public Channel createChannel(int channelNumber) throws IOException {  // FIXME: wrapper
       return this.getConnection().createChannel(channelNumber);
    }
 
@@ -258,7 +257,7 @@ public class RabbitMQAutoConnection {
     * Forces the connection to close.
     * Any encountered exceptions in the close operations are silently discarded.
     */
-   public void abort() throws IOException {
+   public void abort() {
       this.getConnection().abort();
    }
 
@@ -271,7 +270,7 @@ public class RabbitMQAutoConnection {
     * @param closeCode    the close code (See under "Reply Codes" in the AMQP specification)
     * @param closeMessage a message indicating the reason for closing the connection
     */
-   public void abort(int closeCode, String closeMessage) throws IOException {
+   public void abort(int closeCode, String closeMessage) {
       this.getConnection().abort(closeCode, closeMessage);
    }
 
@@ -287,7 +286,7 @@ public class RabbitMQAutoConnection {
     * @param timeout timeout (in milliseconds) for completing all the close-related
     *                operations, use -1 for infinity
     */
-   public void abort(int timeout) throws IOException {
+   public void abort(int timeout) {
       this.getConnection().abort(timeout);
    }
 
@@ -304,7 +303,7 @@ public class RabbitMQAutoConnection {
     * @param timeout      timeout (in milliseconds) for completing all the close-related
     *                     operations, use -1 for infinity
     */
-   public void abort(int closeCode, String closeMessage, int timeout) throws IOException {
+   public void abort(int closeCode, String closeMessage, int timeout) {
       this.getConnection().abort(closeCode, closeMessage, timeout);
    }
 }
