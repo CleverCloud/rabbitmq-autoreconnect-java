@@ -12,7 +12,7 @@ import java.util.Map;
 import java.util.Random;
 import java.util.logging.Logger;
 
-public class RabbitMQAutoConnection implements Connection {
+public class RabbitMQAutoConnection implements Connection, Watchable {
 
    /**
     * Retry until success
@@ -55,6 +55,8 @@ public class RabbitMQAutoConnection implements Connection {
       this.shutdownListeners = new ArrayList<>();
 
       this.random = new Random();
+
+      new WatcherThread(this, this.interval).start();
    }
 
    public RabbitMQAutoConnection(@Nonnull @NonEmpty List<String> hosts, String login, String password, long interval, long tries) {
@@ -81,7 +83,12 @@ public class RabbitMQAutoConnection implements Connection {
       return this.connection != null && this.connection.isOpen();
    }
 
-   private void checkConnection() {
+   @Override
+   public void watch() {
+      this.checkConnection();
+   }
+
+   private synchronized void checkConnection() {
       if (this.isConnected())
          return;
 
@@ -105,6 +112,7 @@ public class RabbitMQAutoConnection implements Connection {
          } catch (InterruptedException ignored) {
          }
       }
+
       if (this.isConnected())
          Logger.getLogger(RabbitMQAutoConnection.class.getName()).info("Connected to the rabbitmq server.");
       else

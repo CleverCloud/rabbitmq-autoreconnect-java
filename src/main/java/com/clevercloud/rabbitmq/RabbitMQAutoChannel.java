@@ -14,7 +14,7 @@ import java.util.logging.Logger;
  * @author Marc-Antoine Perennou<Marc-Antoine@Perennou.com>
  */
 
-public class RabbitMQAutoChannel implements Channel {
+public class RabbitMQAutoChannel implements Channel, Watchable {
 
    private RabbitMQAutoConnection connection;
    private Integer channelNumber;
@@ -38,6 +38,8 @@ public class RabbitMQAutoChannel implements Channel {
       this.shutdownListeners = new ArrayList<>();
 
       this.consumers = new HashMap<>();
+
+      new WatcherThread(this, this.connection.getInterval()).start();
    }
 
    public RabbitMQAutoChannel(RabbitMQAutoConnection connection, Integer channelNumber) {
@@ -49,7 +51,12 @@ public class RabbitMQAutoChannel implements Channel {
       return this.channel != null && this.channel.isOpen();
    }
 
-   private void checkChannel() {
+   @Override
+   public void watch() {
+      this.checkChannel();
+   }
+
+   private synchronized void checkChannel() {
       if (this.isConnected())
          return;
 
