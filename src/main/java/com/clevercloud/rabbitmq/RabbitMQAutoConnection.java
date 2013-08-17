@@ -45,6 +45,8 @@ public class RabbitMQAutoConnection implements Connection, Watchable {
 
    private Random random;
 
+   private WatcherThread watcher;
+
    public RabbitMQAutoConnection(@Nonnull @NonEmpty List<String> hosts, int port, String login, String password, long interval, long tries) {
       this.hosts = hosts;
       this.port = port;
@@ -60,7 +62,8 @@ public class RabbitMQAutoConnection implements Connection, Watchable {
 
       this.random = new Random();
 
-      new WatcherThread(this, this.interval).start();
+      this.watcher = new WatcherThread(this, this.interval);
+      this.watcher.start();
    }
 
    public RabbitMQAutoConnection(@Nonnull @NonEmpty List<String> hosts, String login, String password, long interval, long tries) {
@@ -251,6 +254,7 @@ public class RabbitMQAutoConnection implements Connection, Watchable {
     */
    @Override
    public void close() throws IOException {
+      this.watcher.cancel();
       this.getConnection().close();
    }
 
@@ -265,6 +269,7 @@ public class RabbitMQAutoConnection implements Connection, Watchable {
     */
    @Override
    public void close(int closeCode, String closeMessage) throws IOException {
+      this.watcher.cancel();
       this.getConnection().close(closeCode, closeMessage);
    }
 
@@ -283,6 +288,7 @@ public class RabbitMQAutoConnection implements Connection, Watchable {
     */
    @Override
    public void close(int timeout) throws IOException {
+      this.watcher.cancel();
       this.getConnection().close(timeout);
    }
 
@@ -300,6 +306,7 @@ public class RabbitMQAutoConnection implements Connection, Watchable {
     */
    @Override
    public void close(int closeCode, String closeMessage, int timeout) throws IOException {
+      this.watcher.cancel();
       this.getConnection().close(closeCode, closeMessage, timeout);
    }
 
@@ -313,6 +320,7 @@ public class RabbitMQAutoConnection implements Connection, Watchable {
     */
    @Override
    public void abort() {
+      this.watcher.cancel();
       this.getConnection().abort();
    }
 
@@ -327,6 +335,7 @@ public class RabbitMQAutoConnection implements Connection, Watchable {
     */
    @Override
    public void abort(int closeCode, String closeMessage) {
+      this.watcher.cancel();
       this.getConnection().abort(closeCode, closeMessage);
    }
 
@@ -344,6 +353,7 @@ public class RabbitMQAutoConnection implements Connection, Watchable {
     */
    @Override
    public void abort(int timeout) {
+      this.watcher.cancel();
       this.getConnection().abort(timeout);
    }
 
@@ -362,6 +372,7 @@ public class RabbitMQAutoConnection implements Connection, Watchable {
     */
    @Override
    public void abort(int closeCode, String closeMessage, int timeout) {
+      this.watcher.cancel();
       this.getConnection().abort(closeCode, closeMessage, timeout);
    }
 

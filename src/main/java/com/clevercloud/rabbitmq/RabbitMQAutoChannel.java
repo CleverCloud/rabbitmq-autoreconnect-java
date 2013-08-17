@@ -29,6 +29,8 @@ public class RabbitMQAutoChannel implements Channel, Watchable {
    private Consumer defaultConsumer;
    private Map<String, BasicConsumer> consumers;
 
+   private WatcherThread watcher;
+
    public RabbitMQAutoChannel(RabbitMQAutoConnection connection) {
       this.connection = connection;
 
@@ -39,7 +41,8 @@ public class RabbitMQAutoChannel implements Channel, Watchable {
 
       this.consumers = new HashMap<>();
 
-      new WatcherThread(this, this.connection.getInterval()).start();
+      this.watcher = new WatcherThread(this, this.connection.getInterval());
+      this.watcher.start();
    }
 
    public RabbitMQAutoChannel(RabbitMQAutoConnection connection, Integer channelNumber) {
@@ -131,6 +134,7 @@ public class RabbitMQAutoChannel implements Channel, Watchable {
     */
    @Override
    public void close() throws IOException {
+      this.watcher.cancel();
       this.getChannel().close();
    }
 
@@ -143,6 +147,7 @@ public class RabbitMQAutoChannel implements Channel, Watchable {
     */
    @Override
    public void close(int closeCode, String closeMessage) throws IOException {
+      this.watcher.cancel();
       this.getChannel().close(closeCode, closeMessage);
    }
 
@@ -174,6 +179,7 @@ public class RabbitMQAutoChannel implements Channel, Watchable {
     */
    @Override
    public void abort() throws IOException {
+      this.watcher.cancel();
       this.getChannel().abort();
    }
 
@@ -185,6 +191,7 @@ public class RabbitMQAutoChannel implements Channel, Watchable {
     */
    @Override
    public void abort(int closeCode, String closeMessage) throws IOException {
+      this.watcher.cancel();
       this.getChannel().abort(closeCode, closeMessage);
    }
 
