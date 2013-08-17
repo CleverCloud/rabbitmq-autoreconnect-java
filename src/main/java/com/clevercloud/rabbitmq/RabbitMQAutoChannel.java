@@ -61,7 +61,8 @@ public class RabbitMQAutoChannel implements Channel, Watchable {
          return;
 
       for (int tries = 0; (this.connection.getTries() == RabbitMQAutoConnection.NO_TRIES_LIMIT || tries < this.connection.getTries()) && !this.isConnected(); ++tries) {
-         Logger.getLogger(RabbitMQAutoConnection.class.getName()).info("Attempting to " + ((this.channel != null) ? "re" : "") + "create channel to the rabbitmq server.");
+         if (this.connection.isVerbose())
+            Logger.getLogger(RabbitMQAutoConnection.class.getName()).info("Attempting to " + ((this.channel != null) ? "re" : "") + "create channel to the rabbitmq server.");
 
          try {
             this.channel = (this.channelNumber == null) ? this.connection.createRawChannel() : this.connection.createRawChannel(this.channelNumber);
@@ -90,9 +91,10 @@ public class RabbitMQAutoChannel implements Channel, Watchable {
          } catch (InterruptedException ignored) {
          }
       }
-      if (this.isConnected())
-         Logger.getLogger(RabbitMQAutoConnection.class.getName()).info("Created channel to the rabbitmq server.");
-      else
+      if (this.isConnected()) {
+         if (this.connection.isVerbose())
+            Logger.getLogger(RabbitMQAutoConnection.class.getName()).info("Created channel to the rabbitmq server.");
+      } else
          throw new NoRabbitMQConnectionException();
    }
 

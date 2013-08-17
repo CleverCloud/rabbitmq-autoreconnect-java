@@ -39,6 +39,8 @@ public class RabbitMQAutoConnection implements Connection, Watchable {
    private long interval;
    private long tries;
 
+   private boolean verbose;
+
    private List<ShutdownListener> shutdownListeners;
 
    private Random random;
@@ -51,6 +53,8 @@ public class RabbitMQAutoConnection implements Connection, Watchable {
 
       this.interval = interval;
       this.tries = tries;
+
+      this.verbose = false;
 
       this.shutdownListeners = new ArrayList<>();
 
@@ -69,6 +73,14 @@ public class RabbitMQAutoConnection implements Connection, Watchable {
 
    public RabbitMQAutoConnection(@Nonnull @NonEmpty List<String> hosts, String login, String password) {
       this(hosts, login, password, DEFAULT_INTERVAL, DEFAULT_TRIES);
+   }
+
+   public void setVerbose(boolean verbose) {
+      this.verbose = verbose;
+   }
+
+   public boolean isVerbose() {
+      return this.verbose;
    }
 
    public long getTries() {
@@ -98,7 +110,8 @@ public class RabbitMQAutoConnection implements Connection, Watchable {
       factory.setPassword(this.password);
 
       for (int tries = 0; (this.tries == NO_TRIES_LIMIT || tries < this.tries) && !this.isConnected(); ++tries) {
-         Logger.getLogger(RabbitMQAutoConnection.class.getName()).info("Attempting to " + ((this.connection != null) ? "re" : "") + "connect to the rabbitmq server.");
+         if (this.verbose)
+            Logger.getLogger(RabbitMQAutoConnection.class.getName()).info("Attempting to " + ((this.connection != null) ? "re" : "") + "connect to the rabbitmq server.");
 
          factory.setHost(this.hosts.get(this.random.nextInt(this.hosts.size())));
 
@@ -113,9 +126,10 @@ public class RabbitMQAutoConnection implements Connection, Watchable {
          }
       }
 
-      if (this.isConnected())
-         Logger.getLogger(RabbitMQAutoConnection.class.getName()).info("Connected to the rabbitmq server.");
-      else
+      if (this.isConnected()) {
+         if (this.verbose)
+            Logger.getLogger(RabbitMQAutoConnection.class.getName()).info("Connected to the rabbitmq server.");
+      } else
          throw new NoRabbitMQConnectionException();
    }
 
