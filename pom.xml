@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.clevercloud</groupId>
     <artifactId>rabbitmq-autoreconnect</artifactId>
-    <version>1.2-SNAPSHOT</version>
+    <version>1.2</version>
 
     <name>rabbitmq-autoreconnect</name>
     <description>Helper to automatically handle reconnections automatically in a pool of rabbitmq servers.</description>
