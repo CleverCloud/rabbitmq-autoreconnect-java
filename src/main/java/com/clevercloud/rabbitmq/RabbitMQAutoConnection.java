@@ -32,9 +32,7 @@ public class RabbitMQAutoConnection implements Connection, Watchable {
    private Connection connection;
 
    private List<String> hosts;
-   private int port;
-   private String login;
-   private String password;
+   private ConnectionFactory factory;
 
    private long interval;
    private long tries;
@@ -49,9 +47,11 @@ public class RabbitMQAutoConnection implements Connection, Watchable {
 
    public RabbitMQAutoConnection(@Nonnull @NonEmpty List<String> hosts, int port, String login, String password, long interval, long tries) {
       this.hosts = hosts;
-      this.port = port;
-      this.login = login;
-      this.password = password;
+
+      this.factory = new ConnectionFactory();
+      factory.setPort(port);
+      factory.setUsername(login);
+      factory.setPassword(password);
 
       this.interval = interval;
       this.tries = tries;
@@ -107,19 +107,14 @@ public class RabbitMQAutoConnection implements Connection, Watchable {
       if (this.isConnected())
          return;
 
-      ConnectionFactory factory = new ConnectionFactory();
-      factory.setPort(this.port);
-      factory.setUsername(this.login);
-      factory.setPassword(this.password);
-
       for (int tries = 0; (this.tries == NO_TRIES_LIMIT || tries < this.tries) && !this.isConnected(); ++tries) {
          if (this.verbose)
             Logger.getLogger(RabbitMQAutoConnection.class.getName()).info("Attempting to " + ((this.connection != null) ? "re" : "") + "connect to the rabbitmq server.");
 
-         factory.setHost(this.hosts.get(this.random.nextInt(this.hosts.size())));
+         this.factory.setHost(this.hosts.get(this.random.nextInt(this.hosts.size())));
 
          try {
-            this.connection = factory.newConnection(); // TODO: call newConnection with null, Address[] ?
+            this.connection = this.factory.newConnection(); // TODO: call newConnection with null, Address[] ?
          } catch (IOException ignored) {
          }
 
