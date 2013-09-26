@@ -21,7 +21,7 @@ Maven configuration:
 <dependency>
     <groupId>com.clevercloud</groupId>
     <artifactId>rabbitmq-autoreconnect</artifactId>
-    <version>1.4</version>
+    <version>1.5</version>
 </dependency>
 ```
 
