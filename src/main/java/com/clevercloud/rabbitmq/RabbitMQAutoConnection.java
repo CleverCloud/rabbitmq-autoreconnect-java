@@ -50,13 +50,19 @@ public class RabbitMQAutoConnection implements Connection, Watchable {
    * With SSL
    */
 
-   public RabbitMQAutoConnection(@Nonnull @NonEmpty List<String> hosts, int port, String login, String password, SSLContext context, long interval, long tries) {
+	public RabbitMQAutoConnection(@Nonnull @NonEmpty List<String> hosts, int port, String login, String password, SSLContext context, long interval, long tries) {
+		this(hosts,port, login, password, null, context, interval, tries);
+	}
+
+   public RabbitMQAutoConnection(@Nonnull @NonEmpty List<String> hosts, int port, String login, String password, String vhost, SSLContext context, long interval, long tries) {
       this.hosts = hosts;
 
       this.factory = new ConnectionFactory();
       factory.setPort(port);
       factory.setUsername(login);
       factory.setPassword(password);
+		if(vhost != null)
+			factory.setVirtualHost(vhost);
       if (context != null)
          factory.useSslProtocol(context);
 
@@ -77,12 +83,24 @@ public class RabbitMQAutoConnection implements Connection, Watchable {
       this(hosts, ConnectionFactory.USE_DEFAULT_PORT, login, password, context, interval, tries);
    }
 
+   public RabbitMQAutoConnection(@Nonnull @NonEmpty List<String> hosts, String login, String password, String vhost, SSLContext context, long interval, long tries) {
+      this(hosts, ConnectionFactory.USE_DEFAULT_PORT, login, password, vhost, context, interval, tries);
+   }
+
    public RabbitMQAutoConnection(@Nonnull @NonEmpty List<String> hosts, int port, String login, String password, SSLContext context) {
       this(hosts, port, login, password, context, DEFAULT_INTERVAL, DEFAULT_TRIES);
    }
 
+   public RabbitMQAutoConnection(@Nonnull @NonEmpty List<String> hosts, int port, String login, String password, String vhost, SSLContext context) {
+      this(hosts, port, login, password, vhost, context, DEFAULT_INTERVAL, DEFAULT_TRIES);
+   }
+
    public RabbitMQAutoConnection(@Nonnull @NonEmpty List<String> hosts, String login, String password, SSLContext context) {
       this(hosts, login, password, context, DEFAULT_INTERVAL, DEFAULT_TRIES);
+   }
+
+   public RabbitMQAutoConnection(@Nonnull @NonEmpty List<String> hosts, String login, String password, String vhost, SSLContext context) {
+      this(hosts, login, password, vhost, context, DEFAULT_INTERVAL, DEFAULT_TRIES);
    }
 
    /*
@@ -90,15 +108,31 @@ public class RabbitMQAutoConnection implements Connection, Watchable {
     */
 
    public RabbitMQAutoConnection(@Nonnull @NonEmpty List<String> hosts, int port, String login, String password, long interval, long tries) {
-      this(hosts, port, login, password, null, interval, tries);
+      this(hosts, port, login, password, ConnectionFactory.DEFAULT_VHOST, interval, tries);
+   }
+
+   public RabbitMQAutoConnection(@Nonnull @NonEmpty List<String> hosts, int port, String login, String password, String vhost, long interval, long tries) {
+      this(hosts, port, login, password, vhost, null, interval, tries);
+   }
+
+   public RabbitMQAutoConnection(@Nonnull @NonEmpty List<String> hosts, String login, String password, String vhost, long interval, long tries) {
+      this(hosts, ConnectionFactory.USE_DEFAULT_PORT, login, password, vhost, interval, tries);
    }
 
    public RabbitMQAutoConnection(@Nonnull @NonEmpty List<String> hosts, String login, String password, long interval, long tries) {
       this(hosts, ConnectionFactory.USE_DEFAULT_PORT, login, password, interval, tries);
    }
 
+   public RabbitMQAutoConnection(@Nonnull @NonEmpty List<String> hosts, int port, String login, String password, String vhost) {
+      this(hosts, port, login, password, vhost, DEFAULT_INTERVAL, DEFAULT_TRIES);
+   }
+
    public RabbitMQAutoConnection(@Nonnull @NonEmpty List<String> hosts, int port, String login, String password) {
       this(hosts, port, login, password, DEFAULT_INTERVAL, DEFAULT_TRIES);
+   }
+
+   public RabbitMQAutoConnection(@Nonnull @NonEmpty List<String> hosts, String login, String password, String vhost) {
+      this(hosts, login, password, vhost, DEFAULT_INTERVAL, DEFAULT_TRIES);
    }
 
    public RabbitMQAutoConnection(@Nonnull @NonEmpty List<String> hosts, String login, String password) {
