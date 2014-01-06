@@ -34,12 +34,12 @@ public class RabbitMQAutoChannel implements Channel, Watchable {
    public RabbitMQAutoChannel(RabbitMQAutoConnection connection) {
       this.connection = connection;
 
-      this.returnListeners = new ArrayList<>();
-      this.flowListeners = new ArrayList<>();
-      this.confirmListeners = new ArrayList<>();
-      this.shutdownListeners = new ArrayList<>();
+      this.returnListeners = new ArrayList<ReturnListener>();
+      this.flowListeners = new ArrayList<FlowListener>();
+      this.confirmListeners = new ArrayList<ConfirmListener>();
+      this.shutdownListeners = new ArrayList<ShutdownListener>();
 
-      this.consumers = new HashMap<>();
+      this.consumers = new HashMap<String, BasicConsumer>();
 
       this.watcher = new WatcherThread(this, this.connection.getInterval());
       this.watcher.start();

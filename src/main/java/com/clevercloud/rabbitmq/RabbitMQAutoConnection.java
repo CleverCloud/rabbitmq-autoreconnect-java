@@ -71,7 +71,7 @@ public class RabbitMQAutoConnection implements Connection, Watchable {
 
       this.verbose = false;
 
-      this.shutdownListeners = new ArrayList<>();
+      this.shutdownListeners = new ArrayList<ShutdownListener>();
 
       this.random = new Random();
 
