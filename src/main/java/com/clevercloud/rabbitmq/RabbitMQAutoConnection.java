@@ -432,7 +432,22 @@ public class RabbitMQAutoConnection implements Connection, Watchable {
       this.getConnection().abort(closeCode, closeMessage, timeout);
    }
 
-   /**
+    @Override
+    public void addBlockedListener(BlockedListener listener) {
+        this.getConnection().addBlockedListener(listener);
+    }
+
+    @Override
+    public boolean removeBlockedListener(BlockedListener listener) {
+        return this.getConnection().removeBlockedListener(listener);
+    }
+
+    @Override
+    public void clearBlockedListeners() {
+        this.getConnection().clearBlockedListeners();
+    }
+
+    /**
     * Add shutdown listener.
     * If the component is already closed, handler is fired immediately
     *
