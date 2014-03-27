@@ -41,6 +41,8 @@ public class RabbitMQAutoConnection implements Connection, Watchable {
    private boolean verbose;
 
    private List<ShutdownListener> shutdownListeners;
+   private List<BlockedListener> blockedListeners;
+
 
    private Random random;
 
@@ -72,6 +74,8 @@ public class RabbitMQAutoConnection implements Connection, Watchable {
       this.verbose = false;
 
       this.shutdownListeners = new ArrayList<ShutdownListener>();
+      this.blockedListeners = new ArrayList<BlockedListener>();
+
 
       this.random = new Random();
 
@@ -176,6 +180,14 @@ public class RabbitMQAutoConnection implements Connection, Watchable {
 
          try {
             this.connection = this.factory.newConnection(); // TODO: call newConnection with null, Address[] ?
+            for (ShutdownListener shutdownListener : shutdownListeners) {
+               this.connection.addShutdownListener(shutdownListener);
+            }
+
+            for (BlockedListener blockedListener : blockedListeners) {
+               this.connection.addBlockedListener(blockedListener);
+            }
+
          } catch (IOException ignored) {
          }
 
@@ -489,4 +501,25 @@ public class RabbitMQAutoConnection implements Connection, Watchable {
    public boolean isOpen() {
       return this.getConnection().isOpen();
    }
+
+    @Override
+    public void addBlockedListener(BlockedListener listener) {
+        this.blockedListeners.add(listener);
+        this.getConnection().addBlockedListener(listener);
+    }
+
+    @Override
+    public boolean removeBlockedListener(BlockedListener listener) {
+        this.blockedListeners.remove(listener);
+        return this.getConnection().removeBlockedListener(listener);
+    }
+
+    @Override
+    public void clearBlockedListeners() {
+        this.blockedListeners.clear();
+        this.getConnection().clearBlockedListeners();
+    }
+
 }
+
+
