@@ -1,6 +1,8 @@
 package com.clevercloud.rabbitmq;
 
 import com.rabbitmq.client.*;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -8,13 +10,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeoutException;
-import java.util.logging.Logger;
+
 
 /**
  * @author Marc-Antoine Perennou<Marc-Antoine@Perennou.com>
  */
 
 public class RabbitMQAutoChannel implements Channel, Watchable {
+   private static final Log logger = LogFactory.getLog(RabbitMQAutoChannel.class);
 
    private RabbitMQAutoConnection connection;
    private Integer channelNumber;
@@ -65,7 +68,7 @@ public class RabbitMQAutoChannel implements Channel, Watchable {
 
       for (int tries = 0; (this.connection.getTries() == RabbitMQAutoConnection.NO_TRIES_LIMIT || tries < this.connection.getTries()) && !this.isConnected(); ++tries) {
          if (this.connection.isVerbose())
-            Logger.getLogger(RabbitMQAutoConnection.class.getName()).info("Attempting to " + ((this.channel != null) ? "re" : "") + "create channel to the rabbitmq server.");
+            logger.info("Attempting to " + ((this.channel != null) ? "re" : "") + "create channel to the rabbitmq server.");
 
          try {
             this.channel = (this.channelNumber == null) ? this.connection.createRawChannel() : this.connection.createRawChannel(this.channelNumber);
@@ -96,7 +99,7 @@ public class RabbitMQAutoChannel implements Channel, Watchable {
       }
       if (this.isConnected()) {
          if (this.connection.isVerbose())
-            Logger.getLogger(RabbitMQAutoConnection.class.getName()).info("Created channel to the rabbitmq server.");
+            logger.info("Created channel to the rabbitmq server.");
       } else
          throw new NoRabbitMQConnectionException();
    }

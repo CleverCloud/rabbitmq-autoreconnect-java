@@ -2,6 +2,8 @@ package com.clevercloud.rabbitmq;
 
 import com.clevercloud.annotations.NonEmpty;
 import com.rabbitmq.client.*;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import javax.annotation.Nonnull;
 import javax.net.ssl.SSLContext;
@@ -11,9 +13,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import java.util.logging.Logger;
+
 
 public class RabbitMQAutoConnection implements Connection, Watchable {
+
+   private static final Log logger = LogFactory.getLog(RabbitMQAutoConnection.class);
+
 
    /**
     * Retry until success
@@ -41,6 +46,8 @@ public class RabbitMQAutoConnection implements Connection, Watchable {
    private boolean verbose;
 
    private List<ShutdownListener> shutdownListeners;
+   private List<BlockedListener> blockedListeners;
+
 
    private Random random;
 
@@ -72,6 +79,8 @@ public class RabbitMQAutoConnection implements Connection, Watchable {
       this.verbose = false;
 
       this.shutdownListeners = new ArrayList<ShutdownListener>();
+      this.blockedListeners = new ArrayList<BlockedListener>();
+
 
       this.random = new Random();
 
@@ -170,12 +179,20 @@ public class RabbitMQAutoConnection implements Connection, Watchable {
 
       for (int tries = 0; (this.tries == NO_TRIES_LIMIT || tries < this.tries) && !this.isConnected(); ++tries) {
          if (this.verbose)
-            Logger.getLogger(RabbitMQAutoConnection.class.getName()).info("Attempting to " + ((this.connection != null) ? "re" : "") + "connect to the rabbitmq server.");
+            logger.info("Attempting to " + ((this.connection != null) ? "re" : "") + "connect to the rabbitmq server.");
 
          this.factory.setHost(this.hosts.get(this.random.nextInt(this.hosts.size())));
 
          try {
             this.connection = this.factory.newConnection(); // TODO: call newConnection with null, Address[] ?
+            for (ShutdownListener shutdownListener : shutdownListeners) {
+               this.connection.addShutdownListener(shutdownListener);
+            }
+
+            for (BlockedListener blockedListener : blockedListeners) {
+               this.connection.addBlockedListener(blockedListener);
+            }
+
          } catch (IOException ignored) {
          }
 
@@ -187,7 +204,7 @@ public class RabbitMQAutoConnection implements Connection, Watchable {
 
       if (this.isConnected()) {
          if (this.verbose)
-            Logger.getLogger(RabbitMQAutoConnection.class.getName()).info("Connected to the rabbitmq server.");
+            logger.info("Connected to the rabbitmq server.");
       } else
          throw new NoRabbitMQConnectionException();
    }
@@ -489,4 +506,25 @@ public class RabbitMQAutoConnection implements Connection, Watchable {
    public boolean isOpen() {
       return this.getConnection().isOpen();
    }
+
+    @Override
+    public void addBlockedListener(BlockedListener listener) {
+        this.blockedListeners.add(listener);
+        this.getConnection().addBlockedListener(listener);
+    }
+
+    @Override
+    public boolean removeBlockedListener(BlockedListener listener) {
+        this.blockedListeners.remove(listener);
+        return this.getConnection().removeBlockedListener(listener);
+    }
+
+    @Override
+    public void clearBlockedListeners() {
+        this.blockedListeners.clear();
+        this.getConnection().clearBlockedListeners();
+    }
+
 }
+
+
