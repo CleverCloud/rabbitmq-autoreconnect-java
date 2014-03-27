@@ -2,6 +2,8 @@ package com.clevercloud.rabbitmq;
 
 import com.clevercloud.annotations.NonEmpty;
 import com.rabbitmq.client.*;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import javax.annotation.Nonnull;
 import javax.net.ssl.SSLContext;
@@ -11,9 +13,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import java.util.logging.Logger;
+
 
 public class RabbitMQAutoConnection implements Connection, Watchable {
+
+   private static final Log logger = LogFactory.getLog(RabbitMQAutoConnection.class);
+
 
    /**
     * Retry until success
@@ -174,7 +179,7 @@ public class RabbitMQAutoConnection implements Connection, Watchable {
 
       for (int tries = 0; (this.tries == NO_TRIES_LIMIT || tries < this.tries) && !this.isConnected(); ++tries) {
          if (this.verbose)
-            Logger.getLogger(RabbitMQAutoConnection.class.getName()).info("Attempting to " + ((this.connection != null) ? "re" : "") + "connect to the rabbitmq server.");
+            logger.info("Attempting to " + ((this.connection != null) ? "re" : "") + "connect to the rabbitmq server.");
 
          this.factory.setHost(this.hosts.get(this.random.nextInt(this.hosts.size())));
 
@@ -199,7 +204,7 @@ public class RabbitMQAutoConnection implements Connection, Watchable {
 
       if (this.isConnected()) {
          if (this.verbose)
-            Logger.getLogger(RabbitMQAutoConnection.class.getName()).info("Connected to the rabbitmq server.");
+            logger.info("Connected to the rabbitmq server.");
       } else
          throw new NoRabbitMQConnectionException();
    }
