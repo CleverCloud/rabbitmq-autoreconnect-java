@@ -525,6 +525,11 @@ public class RabbitMQAutoConnection implements Connection, Watchable {
         this.getConnection().clearBlockedListeners();
     }
 
+    @Override
+    public ExceptionHandler getExceptionHandler() {
+        return this.getConnection().getExceptionHandler();
+    }
+
 }
 
 

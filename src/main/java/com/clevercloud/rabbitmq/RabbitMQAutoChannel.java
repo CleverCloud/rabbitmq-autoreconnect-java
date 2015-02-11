@@ -154,24 +154,11 @@ public class RabbitMQAutoChannel implements Channel, Watchable {
       this.getChannel().close(closeCode, closeMessage);
    }
 
-   /**
-    * Set flow on the channel
-    *
-    * @param active if true, the server is asked to start sending. If false, the server is asked to stop sending.
-    * @throws java.io.IOException
-    */
-   @Override
-   public AMQP.Channel.FlowOk flow(boolean active) throws IOException {
-      return this.getChannel().flow(active);
-   }
+    @Override
+    public boolean flowBlocked() {
+        return this.getChannel().flowBlocked();
+    }
 
-   /**
-    * Return the current Channel.Flow settings.
-    */
-   @Override
-   public AMQP.Channel.FlowOk getFlow() {
-      return this.getChannel().getFlow();
-   }
 
    /**
     * Abort this channel with the {@link com.rabbitmq.client.AMQP#REPLY_SUCCESS} close code
@@ -364,7 +351,12 @@ public class RabbitMQAutoChannel implements Channel, Watchable {
       }
    }
 
-   /**
+    @Override
+    public void basicQos(int prefetchCount, boolean global) throws IOException {
+
+    }
+
+    /**
     * Request a specific prefetchCount "quality of service" settings
     * for this channel.
     *
@@ -529,7 +521,12 @@ public class RabbitMQAutoChannel implements Channel, Watchable {
       }
    }
 
-   /**
+    @Override
+    public void exchangeDeclareNoWait(String exchange, String type, boolean durable, boolean autoDelete, boolean internal, Map<String, Object> arguments) throws IOException {
+
+    }
+
+    /**
     * Declare an exchange passively; that is, check if the named exchange exists.
     *
     * @param name check the existence of an exchange named this
@@ -563,7 +560,12 @@ public class RabbitMQAutoChannel implements Channel, Watchable {
       }
    }
 
-   /**
+    @Override
+    public void exchangeDeleteNoWait(String exchange, boolean ifUnused) throws IOException {
+
+    }
+
+    /**
     * Delete an exchange, without regard for whether it is in use or not
     *
     * @param exchange the name of the exchange
@@ -622,7 +624,12 @@ public class RabbitMQAutoChannel implements Channel, Watchable {
       }
    }
 
-   /**
+    @Override
+    public void exchangeBindNoWait(String destination, String source, String routingKey, Map<String, Object> arguments) throws IOException {
+
+    }
+
+    /**
     * Unbind an exchange from an exchange, with no extra arguments.
     *
     * @param destination the name of the exchange to which messages flow across the binding
@@ -663,7 +670,12 @@ public class RabbitMQAutoChannel implements Channel, Watchable {
       }
    }
 
-   /**
+    @Override
+    public void exchangeUnbindNoWait(String destination, String source, String routingKey, Map<String, Object> arguments) throws IOException {
+
+    }
+
+    /**
     * Actively declare a server-named exclusive, autodelete, non-durable queue.
     * The name of the new queue is held in the "queue" field of the {@link com.rabbitmq.client.AMQP.Queue.DeclareOk} result.
     *
@@ -703,7 +715,12 @@ public class RabbitMQAutoChannel implements Channel, Watchable {
       }
    }
 
-   /**
+    @Override
+    public void queueDeclareNoWait(String queue, boolean durable, boolean exclusive, boolean autoDelete, Map<String, Object> arguments) throws IOException {
+
+    }
+
+    /**
     * Declare a queue passively; i.e., check if it exists.  In AMQP
     * 0-9-1, all arguments aside from nowait are ignored; and sending
     * nowait makes this method a no-op, so we default it to false.
@@ -763,7 +780,12 @@ public class RabbitMQAutoChannel implements Channel, Watchable {
       }
    }
 
-   /**
+    @Override
+    public void queueDeleteNoWait(String queue, boolean ifUnused, boolean ifEmpty) throws IOException {
+
+    }
+
+    /**
     * Bind a queue to an exchange, with no extra arguments.
     *
     * @param queue      the name of the queue
@@ -804,7 +826,12 @@ public class RabbitMQAutoChannel implements Channel, Watchable {
       }
    }
 
-   /**
+    @Override
+    public void queueBindNoWait(String queue, String exchange, String routingKey, Map<String, Object> arguments) throws IOException {
+
+    }
+
+    /**
     * Unbinds a queue from an exchange, with no extra arguments.
     *
     * @param queue      the name of the queue
@@ -1002,7 +1029,12 @@ public class RabbitMQAutoChannel implements Channel, Watchable {
       return ret;
    }
 
-   /**
+    @Override
+    public String basicConsume(String queue, boolean autoAck, Map<String, Object> arguments, Consumer callback) throws IOException {
+        return null;
+    }
+
+    /**
     * Start a non-nolocal, non-exclusive consumer.
     *
     * @param queue       the name of the queue
